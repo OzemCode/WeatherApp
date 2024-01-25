@@ -19,6 +19,7 @@ protocol WeatherDatePresenterProtocol: AnyObject {
     func navigateToAstroScreen()
     func didLoadDate(date: String)
     func displayWeatherImage(isDay: Int, weatherCondition: Int)
+    func saveLastCityName(_ cityName: String)
     
 }
 
@@ -57,13 +58,13 @@ extension WeatherDatePresenter: WeatherDatePresenterProtocol {
     func displayWeatherImage(isDay: Int, weatherCondition: Int) {
         var imageName = ""
         let weatherCode = WeatherMapper.mapWeatherConditionToCategory(conditionCode: weatherCondition)
-
+        
         if isDay == 0 {
             imageName += "night_"
         } else {
             imageName += "day_"
         }
-
+        
         imageName += weatherCode
         view?.backgroundImage(image: imageName)
     }
@@ -72,7 +73,11 @@ extension WeatherDatePresenter: WeatherDatePresenterProtocol {
     }
     
     func viewDidLoaded() {
-        interactor.getLoaded()
+        if let lastCityName = UserDefaults.standard.string(forKey: "LastCityName") {
+            updateCityName(lastCityName)
+        } else {
+            interactor.getLoaded()
+        }
     }
     
     func didLoadDate(date: String) {
@@ -95,9 +100,15 @@ extension WeatherDatePresenter: WeatherDatePresenterProtocol {
         view?.showLoaderIndicator(isShow)
     }
     
+    func saveLastCityName(_ cityName: String) {
+        UserDefaults.standard.set(cityName, forKey: "LastCityName")
+    }
+    
     func updateCityName(_ newName: String) {
         interactor.updateCityName(newName)
         interactor.getLoaded()
+        
+        saveLastCityName(newName)
     }
     
     func navigateToNewScreen() {
