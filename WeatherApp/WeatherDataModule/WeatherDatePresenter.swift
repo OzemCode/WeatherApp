@@ -37,36 +37,22 @@ class WeatherDatePresenter {
 }
 
 extension WeatherDatePresenter: WeatherDatePresenterProtocol {
-    
-    private func formatDateTime(_ originalDateString: String) {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
-        guard let originalDate = dateFormatter.date(from: originalDateString) else {
-            print("Failed to convert date from string: \(originalDateString)")
-            return
-        }
         
-        let newDateFormat = DateFormatter()
-        newDateFormat.dateFormat = "dd-MM-yyyy"
-        let newTimeFormat = DateFormatter()
-        newTimeFormat.dateFormat = "HH:mm"
-        let newDateString = newDateFormat.string(from: originalDate)
-        let newTimeString = newTimeFormat.string(from: originalDate)
-        view?.showDateTime(date: newDateString, time: newTimeString)
-    }
-    
     func displayWeatherImage(isDay: Int, weatherCondition: Int) {
         var imageName = ""
+        var color = UIColor()
         let weatherCode = WeatherMapper.mapWeatherConditionToCategory(conditionCode: weatherCondition)
         
         if isDay == 0 {
-            imageName += "night_"
+            imageName += "night"
+            color = .gradientColorNight
         } else {
-            imageName += "day_"
+            imageName += "day"
+            color = .gradientColorDay
         }
         
         imageName += weatherCode
-        view?.backgroundImage(image: imageName)
+        view?.backgroundImage(image: imageName, color)
     }
     func didLoadWidget(_ isShow: Bool) {
         view?.showLoaderWidget(isShow)
@@ -81,7 +67,10 @@ extension WeatherDatePresenter: WeatherDatePresenterProtocol {
     }
     
     func didLoadDate(date: String) {
-        formatDateTime(date)
+        if let formattedDate = date.formatDateTime().date {
+            let time = date.formatDateTime().time ?? ""
+            view?.showDate(date: formattedDate, time: time)
+        }
     }
     
     func didLoadTemperature(tempC: Double, condition: String) {

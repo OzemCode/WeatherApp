@@ -37,3 +37,11 @@ extension UILabel {
     }
 }
 
+extension UILabel {
+    func addMetricSymbol(_ ofSize: CGFloat, _ color: UIColor = .white) {
+        text = "°"
+        textColor = color
+        font = .systemFont(ofSize: ofSize)
+    }
+}
+

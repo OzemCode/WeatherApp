@@ -26,7 +26,7 @@ class SideDataViewController: UIViewController, UITableViewDelegate, UITableView
     }
 
     private func setupUI() {
-        view.addBlurEffect(alpha: 0.3)
+        view.addBlurEffect(alpha: 0.9)
         view.backgroundColor = .clear
         setupTableView()
     }

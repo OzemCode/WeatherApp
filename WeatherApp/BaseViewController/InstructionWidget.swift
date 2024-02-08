@@ -6,7 +6,6 @@
 //
 
 import SnapKit
-import SwiftyGif
 
 class InstructionWidget: UIView {
 
@@ -18,11 +17,11 @@ class InstructionWidget: UIView {
     
     private let label: UILabel = {
         let label = UILabel()
-        label.text = "Swipe for \n more details"
+        label.text = "Swipe for more details"
         label.textColor = .white
         label.numberOfLines = 0
         label.textAlignment = .center
-        label.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
+        label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         return label
     }()
     
@@ -30,11 +29,7 @@ class InstructionWidget: UIView {
 
     init() {
         super.init(frame: .zero)
-        
-        if !UserDefaults.standard.bool(forKey: hasBeenDisplayedKey) {
-            setupUI()
-            UserDefaults.standard.set(true, forKey: hasBeenDisplayedKey)
-        }
+        setupUI()
     }
 
     required init?(coder: NSCoder) {
@@ -52,11 +47,11 @@ class InstructionWidget: UIView {
         }
         
         imageView.snp.makeConstraints { make in
-            make.centerX.top.equalToSuperview()
+            make.centerX.bottom.equalToSuperview()
         }
         
         label.snp.makeConstraints { make in
-            make.centerX.bottom.equalToSuperview()
+            make.centerX.top.equalToSuperview()
         }
     }
     
@@ -65,15 +60,13 @@ class InstructionWidget: UIView {
         
         snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.centerY.equalToSuperview().offset(200)
-            make.width.equalToSuperview().multipliedBy(0.2)
-            make.height.equalToSuperview().multipliedBy(0.15)
+            make.bottom.equalToSuperview().offset(-40)
         }
     }
     
     func viewWidgetHide(_ isShow: Bool) {
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 7) { [weak self] in
             UIView.animate(withDuration: 0.5, animations: {
                 if isShow {
                     self?.alpha = 1.0
@@ -89,4 +82,3 @@ class InstructionWidget: UIView {
     }
     
 }
-

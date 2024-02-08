@@ -28,9 +28,7 @@ class WeatherDetailsViewController: UIViewController {
         super.viewDidLoad()
         view.addBlurEffect()
         setupCollectionView()
-        
-//        let currentSize = view.frame.height
-        
+                
         if let sheet = self.presentationController as? UISheetPresentationController {
             sheet.detents = [.medium()]
             sheet.prefersGrabberVisible = false
@@ -149,15 +147,12 @@ extension WeatherDetailsViewController: UICollectionViewDelegateFlowLayout {
     // MARK: - UICollectionViewDelegateFlowLayout
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let cell = CustomCellWind()
-        let height = cell.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
-            .height
-        let weight = (collectionView.frame.width / 2) - 20.0
-        return .init(width: weight, height: height)
+        let size = (collectionView.frame.width * 0.5) - 20.0
+        return .init(width: size, height: size)
     }
 
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 10, left: 15, bottom: 15, right: 15)
+        return UIEdgeInsets(top: 15, left: 15, bottom: 15, right: 15)
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 15.0

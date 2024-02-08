@@ -20,8 +20,8 @@ class BaseViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .gradientColorNight
         setupLoadingIndicator()
-//        setupInstructionWidgetIfNeeded()
     }
         
         
@@ -30,10 +30,8 @@ class BaseViewController: UIViewController {
      func showIndicator(_ isLoading: Bool) {
         if isLoading {
             loadingIndicator.startAnimating()
-            view.backgroundColor = #colorLiteral(red: 0.4142881632, green: 0.6379151344, blue: 0.9611112475, alpha: 0.6466266556)
         } else {
             loadingIndicator.stopAnimating()
-            view.backgroundColor = .clear
         }
         view.isUserInteractionEnabled = !isLoading
     }
@@ -44,9 +42,7 @@ class BaseViewController: UIViewController {
         view.addSubview(loadingIndicator)
         
         loadingIndicator.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.centerY.equalToSuperview()
+            make.centerX.centerY.equalToSuperview()
         }
     }
-    
 }

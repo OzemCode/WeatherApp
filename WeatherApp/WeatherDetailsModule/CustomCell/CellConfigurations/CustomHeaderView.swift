@@ -65,10 +65,10 @@ class CustomHeaderView: UIView {
     
     func setupConstraints(_ view: UIView) {
         snp.makeConstraints { (make) in
-            make.top.equalTo(view.snp.top).offset(5)
-            make.leading.equalTo(view.snp.leading)
+            make.top.equalTo(view).offset(5)
+            make.leading.equalTo(view)
             make.height.equalTo(20)
-            make.width.equalTo(view.snp.width).offset(-30)
+            make.width.equalTo(view).offset(-30)
         }
     }
 }

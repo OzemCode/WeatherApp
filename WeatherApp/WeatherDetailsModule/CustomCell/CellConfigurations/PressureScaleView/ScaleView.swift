@@ -5,7 +5,7 @@
 //  Created by Valentyn Kashkalda on 16.12.2023.
 //
 
-import UIKit
+import SnapKit
 
 class ScaleView: UIView {
     
@@ -20,7 +20,6 @@ class ScaleView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupScale()
-        translatesAutoresizingMaskIntoConstraints = false
     }
 
     required init?(coder: NSCoder) {
@@ -32,85 +31,67 @@ class ScaleView: UIView {
     private func setupScale() {
         
         let circleImageView = UIImageView(image: UIImage(named: "scale"))
-        circleImageView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(circleImageView)
-
-        NSLayoutConstraint.activate([
-            circleImageView.centerXAnchor.constraint(equalTo: centerXAnchor),
-            circleImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            circleImageView.heightAnchor.constraint(equalTo: heightAnchor),
-            circleImageView.widthAnchor.constraint(equalTo: widthAnchor)
-        ])
+        
+        circleImageView.snp.makeConstraints { make in
+            make.centerY.centerX.equalToSuperview()
+        }
         
         let arrowUp = UIImageView(image: UIImage(named: "arrowUp"))
         let arrowDown = UIImageView(image: UIImage(named: "arrowDown"))
         arrowCurent.image = UIImage(named: "arrowUp")
         
         arrowUp.tintColor = .white
-        arrowUp.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(arrowUp)
-        
         arrowDown.tintColor = .white
-        arrowDown.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(arrowDown)
-        
         arrowCurent.tintColor = .white
-        arrowCurent.translatesAutoresizingMaskIntoConstraints = false
+        
+        addSubview(arrowUp)
+        addSubview(arrowDown)
         addSubview(arrowCurent)
         
-        NSLayoutConstraint.activate([
-            arrowUp.bottomAnchor.constraint(equalTo: circleImageView.bottomAnchor),
-            arrowUp.trailingAnchor.constraint(equalTo: circleImageView.trailingAnchor, constant: -15),
-            arrowUp.heightAnchor.constraint(equalToConstant: 15),
-            arrowUp.widthAnchor.constraint(equalToConstant: 15),
-            
-            arrowDown.bottomAnchor.constraint(equalTo: circleImageView.bottomAnchor),
-            arrowDown.leadingAnchor.constraint(equalTo: circleImageView.leadingAnchor, constant: 15),
-            arrowDown.heightAnchor.constraint(equalToConstant: 15),
-            arrowDown.widthAnchor.constraint(equalToConstant: 15),
-            
-            arrowCurent.centerXAnchor.constraint(equalTo: circleImageView.centerXAnchor),
-            arrowCurent.centerYAnchor.constraint(equalTo: circleImageView.centerYAnchor, constant: -25),
-            arrowCurent.heightAnchor.constraint(equalToConstant: 20),
-            arrowCurent.widthAnchor.constraint(equalToConstant: 20)
-        ])
+        arrowUp.snp.makeConstraints { make in
+            make.bottom.equalTo(circleImageView)
+            make.left.equalTo(circleImageView.snp.centerX).offset(20)
+        }
+        
+        arrowDown.snp.makeConstraints { make in
+            make.bottom.equalTo(circleImageView)
+            make.right.equalTo(circleImageView.snp.centerX).offset(-20)
+        }
+        
+        arrowCurent.snp.makeConstraints { make in
+            make.centerX.equalTo(circleImageView)
+            make.centerY.equalTo(circleImageView).offset(-25)
+        }
         
         currentLabel.layer.masksToBounds = true
         currentLabel.adjustsFontSizeToFitWidth = true
         currentLabel.textColor = .white
         currentLabel.numberOfLines = 0
         currentLabel.textAlignment = .center
-        currentLabel.translatesAutoresizingMaskIntoConstraints = false
         addSubview(currentLabel)
         
-        NSLayoutConstraint.activate([
-            currentLabel.centerXAnchor.constraint(equalTo: circleImageView.centerXAnchor),
-            currentLabel.centerYAnchor.constraint(equalTo: circleImageView.centerYAnchor, constant: 10),
-            currentLabel.heightAnchor.constraint(equalToConstant: 45),
-            currentLabel.widthAnchor.constraint(equalToConstant: 70)
-        ])
+        currentLabel.snp.makeConstraints { make in
+            make.centerX.equalTo(circleImageView)
+            make.centerY.equalTo(circleImageView).offset(10)
+            make.height.equalToSuperview().offset(45)
+            make.width.equalToSuperview().offset(70)
+        }
                 
         lineBlurImage.image = UIImage(named: "line")
-        lineBlurImage.translatesAutoresizingMaskIntoConstraints = false
         addSubview(lineBlurImage)
         
-        NSLayoutConstraint.activate([
-            lineBlurImage.centerYAnchor.constraint(equalTo: circleImageView.centerYAnchor),
-            lineBlurImage.centerXAnchor.constraint(equalTo: circleImageView.centerXAnchor),
-            lineBlurImage.heightAnchor.constraint(equalTo: circleImageView.heightAnchor, constant: 10),
-            lineBlurImage.widthAnchor.constraint(equalToConstant: 7.5)
-        ])
+        lineBlurImage.snp.makeConstraints { make in
+            make.centerY.centerX.equalTo(circleImageView)
+            make.height.equalTo(circleImageView).offset(10)
+        }
     }
     
     func setupConstraints(_ view: UIView) {
-        translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 10),
-            centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.7),
-            heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.7)
-        ])
+        snp.makeConstraints { make in
+            make.centerX.centerY.equalTo(view).offset(10)
+            make.width.height.equalTo(view).multipliedBy(0.7)
+        }
     }
     
     func setupChangeLine(_ valueGPa: Double ) {

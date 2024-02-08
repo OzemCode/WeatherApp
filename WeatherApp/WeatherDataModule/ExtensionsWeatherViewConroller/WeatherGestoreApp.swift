@@ -5,7 +5,7 @@
 //  Created by Valentyn Kashkalda on 28.12.2023.
 //
 
-import UIKit
+import SnapKit
 
 extension WeatherDateViewController {
     
@@ -17,7 +17,8 @@ extension WeatherDateViewController {
     }
     
    private func setupSwipeGesture() {
-        let swipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipe(_:)))
+        let swipeGesture = UISwipeGestureRecognizer(target: self,
+                                                    action: #selector(handleSwipe(_:)))
         swipeGesture.direction = .up
         view.addGestureRecognizer(swipeGesture)
     }
@@ -30,7 +31,8 @@ extension WeatherDateViewController {
     }
     
     private func setupTapGesture() {
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+        let tapGesture = UITapGestureRecognizer(target: self,
+                                                action: #selector(handleTap))
         view.addGestureRecognizer(tapGesture)
     }
     
@@ -39,7 +41,8 @@ extension WeatherDateViewController {
     }
     
     private func setupSwipeGestureForSideMenu() {
-        let swipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(handleSwipeForSideMenu(_:)))
+        let swipeGesture = UISwipeGestureRecognizer(target: self,
+                                                    action: #selector(handleSwipeForSideMenu(_:)))
         swipeGesture.direction = .left
         view.addGestureRecognizer(swipeGesture)
     }
@@ -61,24 +64,28 @@ extension WeatherDateViewController {
             
             astroLabel.text = "A\nS\nT\nR\nO"
             astroLabel.textAlignment = .center
-            astroLabel.font = .systemFont(ofSize: 16, weight: .semibold)
+            astroLabel.font = .systemFont(ofSize: 16, weight: .medium)
             astroLabel.textColor = .white
             astroLabel.numberOfLines = 0
-            astroLabel.translatesAutoresizingMaskIntoConstraints = false
             sideMenuViewController?.view.addSubview(astroLabel)
             
-            NSLayoutConstraint.activate([
-                astroLabel.trailingAnchor.constraint(equalTo: sideMenuViewController!.view.leadingAnchor, constant: -5),
-                astroLabel.centerYAnchor.constraint(equalTo: sideMenuViewController!.view.centerYAnchor),
-            ])
-            
+            astroLabel.snp.makeConstraints { make in
+                make.right.equalTo(sideMenuViewController!.view.snp.left).offset(-5)
+                make.centerY.equalTo(sideMenuViewController!.view.snp.centerY)
+            }
+
             view.addSubview(sideMenuViewController!.view)
             addChild(sideMenuViewController!)
             sideMenuViewController?.didMove(toParent: self)
         }
         
         UIView.animate(withDuration: 0.3) {
-            self.sideMenuViewController?.view.frame.origin.x = show ? self.view.frame.width / 1.4 : self.view.frame.width
+            self.sideMenuViewController?.view.frame.origin.x = show ? self.view.frame.width / 1.5 : self.view.frame.width
+            if show {
+                self.astroLabel.alpha = 0.0
+            } else {
+                self.astroLabel.alpha = 1.0
+            }
         }
     }
 

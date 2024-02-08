@@ -34,8 +34,8 @@ class CompassView: UIView {
         
         circleImageView.snp.makeConstraints { (make) in
             make.centerX.equalToSuperview()
-            make.centerY.equalToSuperview().offset(10)
-            make.height.width.equalToSuperview().offset(-20)
+            make.centerY.equalToSuperview()
+//            make.height.width.equalToSuperview().offset(-20)
         }
         
         circleLabel.layer.cornerRadius = 33.75
@@ -50,7 +50,7 @@ class CompassView: UIView {
           
         circleLabel.snp.makeConstraints { make in
             make.centerX.centerY.equalTo(circleImageView)
-            make.width.height.equalToSuperview().offset(67.5)
+            make.width.height.equalTo(67.5)
         }
                 
         arrowImage.image = UIImage(named: "arrow")
@@ -58,8 +58,7 @@ class CompassView: UIView {
         
         arrowImage.snp.makeConstraints { make in
             make.centerY.centerX.equalTo(circleImageView)
-            make.height.equalTo(circleImageView).offset(7.5)
-            make.width.equalToSuperview().multipliedBy(0.15)
+            make.height.equalTo(circleImageView)
         }
     }
     
@@ -67,8 +66,7 @@ class CompassView: UIView {
         circleImageView.snp.makeConstraints { make in
             make.centerY.equalTo(view).offset(10)
             make.centerX.equalTo(view)
-            make.width.equalTo(view).multipliedBy(0.75)
-            make.height.equalTo(view).multipliedBy(0.75)
+            make.height.width.equalTo(view).multipliedBy(0.75)
         }
     }
     

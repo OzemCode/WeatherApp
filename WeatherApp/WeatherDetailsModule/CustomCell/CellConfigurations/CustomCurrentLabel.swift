@@ -39,8 +39,8 @@ class CustomCurrentLabel: UILabel {
 
     func setupConstraints(_ view: UIView) {
         snp.makeConstraints { (make) in
-            make.leading.equalTo(view.snp.leading).offset(20)
-            make.top.equalTo(view.snp.top).offset(30)
+            make.leading.equalTo(view).offset(20)
+            make.top.equalTo(view).offset(30)
             make.width.equalTo(view.snp.width)
             make.height.equalTo(50)
         }

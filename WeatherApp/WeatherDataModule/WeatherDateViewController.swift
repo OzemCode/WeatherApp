@@ -4,16 +4,16 @@
 //
 //  Created by Valentyn Kashkalda on 02.10.2023.
 //
-import UIKit
+
 import SnapKit
 
 protocol WeatherDateViewProtocol: AnyObject {
-    func showDateTime(date: String, time: String)
+    func showDate(date: String, time: String)
     func showTemperature(tempC: Double, condition: String)
     func showCityRegion(city: String, region: String)
     func showLoaderIndicator(_ isShow: Bool)
     func updateCityName(_ newName: String)
-    func backgroundImage(image: String)
+    func backgroundImage(image: String, _ backgroundColor: UIColor)
     func showLoaderFullImage(_ isShow: Bool)
     func showLoaderWidget(_ isShow: Bool)
     
@@ -27,67 +27,73 @@ class WeatherDateViewController: BaseViewController {
     var sideMenuViewController: SideDataViewController?
 
     
-    private let backgroundImageView = UIImageView()
+    private let conditionImageView = UIImageView()
+    private let locationImageView = UIImageView()
     private let cityTextField = UITextField()
     private let updateButton = UIButton()
-    private let downBlurView = UIView()
     private let metricLabel = UILabel()
     private let fullScreenImageView = LaunchScreen()
     private let instructionWidget = InstructionWidget()
     let astroLabel = UILabel()
     
-    private let cityNameLabel = CustomWeatherLabel(of: 34, font: .semibold)
-    private let regionNameLabel = CustomWeatherLabel(of: 22, font: .regular)
-    private let temperatureLabel = CustomWeatherLabel(of: 90, font: .thin)
-    private let conditionLabel = CustomWeatherLabel(of: 22, font: .regular)
-    private let locationTimeLabel = CustomWeatherLabel(of: 25, font: .regular)
-    private let locationDataLabel = CustomWeatherLabel(of: 30, font: .regular)
+    private let cityNameLabel = CustomWeatherLabel(of: 26, font: .medium)
+    private let temperatureLabel = CustomWeatherLabel(of: 120, font: .medium)
+    private let conditionLabel = CustomWeatherLabel(of: 20, font: .medium)
+    private let locationDataLabel = CustomWeatherLabel(of: 16, font: .medium)
+    private let locationTimeLabel = CustomWeatherLabel(of: 16, font: .medium)
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        showSideMenu(false)
-        setupBackgroundImage()
         presenter?.viewDidLoaded()
-        createCityText()
-        setupUILabel()
-        createUpdateButton()
-        setupDownView()
-        gestureDidLoaded()
-        setupMetricLabel()
-        setupConditionLabel()
-        
-        instructionWidget.addConstraintFullScreanImage(view)
-        fullScreenImageView.addConstraintFullScreanImage(view)
+        setupUIElements()
     }
     
     // MARK: - UI Setup
     
-    private func setupUILabel() {
+    private func setupUIElements() {
+        showSideMenu(false)
+        setupConditionImage()
+        setupCityText()
+        setupConstraints()
+        setupUpdateButton()
+        gestureDidLoaded()
+    }
+    
+    private func setupConstraints() {
         view.addSubview(cityNameLabel)
-        view.addSubview(regionNameLabel)
         view.addSubview(temperatureLabel)
         view.addSubview(metricLabel)
         view.addSubview(conditionLabel)
-        view.addSubview(locationTimeLabel)
         view.addSubview(locationDataLabel)
+        view.addSubview(locationTimeLabel)
+        view.addSubview(locationImageView)
         
         cityNameLabel.snp.makeConstraints { make in
-            make.top.equalTo(cityTextField.snp.bottom).offset(20)
-            make.height.equalTo(view.snp.height).multipliedBy(0.1)
-            make.width.equalTo(view.snp.width).multipliedBy(0.5)
-            make.centerX.equalTo(view.snp.centerX)
+            make.top.equalTo(cityTextField.snp.bottom).offset(15)
+            make.centerX.equalToSuperview().offset(-10)
         }
-
-        regionNameLabel.snp.makeConstraints { make in
-            make.centerY.equalTo(cityNameLabel.snp.bottom).offset(5)
-            make.height.equalTo(cityNameLabel.snp.height).multipliedBy(0.8)
-            make.width.equalTo(cityNameLabel.snp.width)
-            make.centerX.equalTo(cityNameLabel.snp.centerX)
+        
+        locationDataLabel.snp.makeConstraints { make in
+            make.top.equalTo(cityNameLabel.snp.bottom)
+            make.centerX.equalToSuperview()
+        }
+        
+        locationTimeLabel.snp.makeConstraints { make in
+            make.top.equalTo(locationDataLabel.snp.bottom)
+            make.centerX.equalToSuperview()
+        }
+                
+        conditionImageView.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalTo(locationDataLabel.snp.bottom).offset(50)
+            make.width.equalToSuperview().multipliedBy(0.5)
+            make.height.equalToSuperview().multipliedBy(0.25)
         }
 
         temperatureLabel.snp.makeConstraints { make in
-            make.top.equalTo(regionNameLabel.snp.centerY).offset(10)
-            make.centerX.equalTo(view.snp.centerX)
+            make.centerX.equalToSuperview()
+            make.height.equalToSuperview().multipliedBy(0.15)
+            make.top.equalTo(view.snp.centerY).offset(100)
         }
 
         metricLabel.snp.makeConstraints { make in
@@ -97,79 +103,61 @@ class WeatherDateViewController: BaseViewController {
 
         conditionLabel.snp.makeConstraints { make in
             make.top.equalTo(temperatureLabel.snp.bottom)
-            make.centerX.equalTo(cityNameLabel.snp.centerX)
+            make.centerX.equalToSuperview()
         }
-
-        locationDataLabel.snp.makeConstraints { make in
-            make.bottom.equalTo(view.snp.bottom).offset(-10)
-            make.height.equalTo(cityNameLabel.snp.height)
-            make.width.equalTo(cityNameLabel.snp.width)
-            make.centerX.equalTo(cityNameLabel.snp.centerX)
+        
+        locationImageView.snp.makeConstraints { make in
+            make.right.equalTo(cityNameLabel.snp.left).offset(-5)
+            make.bottom.equalTo(cityNameLabel.snp.bottom).offset(-5)
         }
-
-        locationTimeLabel.snp.makeConstraints { make in
-            make.bottom.equalTo(locationDataLabel.snp.centerY)
-            make.height.equalTo(cityNameLabel.snp.height)
-            make.width.equalTo(cityNameLabel.snp.width)
-            make.centerX.equalTo(cityNameLabel.snp.centerX)
-        }
-
+        
+        setupMetricLabel()
+        setupConditionLabel()
+        
+        instructionWidget.addConstraintFullScreanImage(view)
+        fullScreenImageView.addConstraintFullScreanImage(view)
     }
     
-    private func createCityText() {
+    private func setupCityText() {
         cityTextField.setupCityTextField()
+        cityTextField.delegate = self
         view.addSubview(cityTextField)
         
-        NSLayoutConstraint.activate([
-            cityTextField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            cityTextField.topAnchor.constraint(equalTo: view.topAnchor, constant: 60),
-            cityTextField.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.9),
-            cityTextField.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.07)
-        ])
+        cityTextField.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalToSuperview().offset(55)
+            make.width.equalToSuperview().multipliedBy(0.9)
+            make.height.equalTo(50)
+        }
+
     }
     
-    private func setupBackgroundImage() {
-        backgroundImageView.contentMode = .scaleAspectFill
-        backgroundImageView.frame = view.bounds
-        backgroundImageView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        view.addSubview(backgroundImageView)
-        view.sendSubviewToBack(backgroundImageView)
+    private func setupConditionImage() {
+        view.addSubview(conditionImageView)
+        view.sendSubviewToBack(conditionImageView)
+        conditionImageView.layer.shadowColor = UIColor.black.cgColor
+        conditionImageView.layer.shadowOpacity = 0.5
+        conditionImageView.layer.shadowOffset = CGSize(width: 2, height: 2)
+        conditionImageView.layer.shadowRadius = 4
+        conditionImageView.contentMode = .scaleAspectFill
     }
     
-    private func createUpdateButton() {
+    private func setupUpdateButton() {
+        
         let image = UIImage(named: "search")
         updateButton.setImage(image, for: .normal)
-        updateButton.translatesAutoresizingMaskIntoConstraints = false
         updateButton.addTarget(self, action: #selector(updateButtonTapped), for: .touchUpInside)
         view.addSubview(updateButton)
         
-        NSLayoutConstraint.activate([
-            updateButton.rightAnchor.constraint(equalTo: cityTextField.rightAnchor, constant: -10),
-            updateButton.centerYAnchor.constraint(equalTo: cityTextField.centerYAnchor),
-            updateButton.widthAnchor.constraint(equalToConstant: 35),
-            updateButton.heightAnchor.constraint(equalToConstant: 35)
-        ])
-    }
-    
-    private func setupDownView() {
-        downBlurView.translatesAutoresizingMaskIntoConstraints = false
-        downBlurView.backgroundColor = .clear
-        downBlurView.layer.cornerRadius = 20
-        downBlurView.layer.masksToBounds = true
-        downBlurView.addBlurEffect(alpha: 0.5)
-        view.addSubview(downBlurView)
+        updateButton.snp.makeConstraints { make in
+            make.right.equalTo(cityTextField.snp.right).offset(-10)
+            make.centerY.equalTo(cityTextField)
+        }
         
-        NSLayoutConstraint.activate([
-            downBlurView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            downBlurView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 25),
-            downBlurView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.85),
-            downBlurView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.05)
-        ])
     }
     
     private func setupMetricLabel() {
         metricLabel.text = "°"
-        metricLabel.translatesAutoresizingMaskIntoConstraints = false
         metricLabel.textColor = .white
         metricLabel.font = .systemFont(ofSize: 50)
     }
@@ -190,9 +178,20 @@ class WeatherDateViewController: BaseViewController {
     }
 }
 
+extension WeatherDateViewController: UITextFieldDelegate{
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if textField == cityTextField {
+            updateButtonTapped()
+            return true
+        }
+        return false
+    }
+}
+
 // MARK: - WeatherDateViewProtocol
 
 extension WeatherDateViewController: WeatherDateViewProtocol {
+    
     func showLoaderWidget(_ isShow: Bool) {
         instructionWidget.viewWidgetHide(isShow)
     }
@@ -201,28 +200,39 @@ extension WeatherDateViewController: WeatherDateViewProtocol {
         fullScreenImageView.viewHide(isShow)
     }
     
-    func backgroundImage(image: String) {
-        backgroundImageView.image = UIImage(named: image)
+    func backgroundImage(image: String, _ backgroundColor: UIColor) {
+        UIView.transition(with: conditionImageView, duration: 0.4, options: .transitionCrossDissolve, animations: {
+            self.conditionImageView.image = UIImage(named: image)
+            self.view.backgroundColor = backgroundColor
+            self.cityTextField.backgroundColor = backgroundColor
+        }, completion: nil)
     }
     
     func updateCityName(_ newName: String) {
-        self.cityTextField.text = newName
+        cityTextField.text = newName
     }
     
-    func showDateTime(date: String, time: String) {
-        self.locationDataLabel.text = date
-        self.locationTimeLabel.text = time
+    func showDate(date: String, time: String) {
+        UIView.transition(with: locationDataLabel, duration: 0.3, options: .transitionCrossDissolve, animations: {
+            self.locationDataLabel.text = date
+            self.locationTimeLabel.text = time
+        }, completion: nil)
     }
     
     func showTemperature(tempC: Double, condition: String) {
         let value = Int(tempC.rounded())
-        self.temperatureLabel.text = "\(value)"
-        self.conditionLabel.text = condition
+        UIView.transition(with: temperatureLabel, duration: 0.3, options: .transitionCrossDissolve, animations: {
+            self.temperatureLabel.text = "\(value)"
+            self.conditionLabel.text = condition
+        }, completion: nil)
+
     }
     
     func showCityRegion(city: String, region: String) {
-        self.cityNameLabel.text = city
-        regionNameLabel.text = region
+        UIView.transition(with: cityNameLabel, duration: 0.3, options: .transitionCrossDissolve, animations: {
+            self.cityNameLabel.text = city
+        }, completion: nil)
+        cityNameLabel.setAttributedTextWithImageLeft(city, imageName: "location")
     }
     
     func showLoaderIndicator(_ isShow: Bool) {
